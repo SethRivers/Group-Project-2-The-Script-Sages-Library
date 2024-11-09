@@ -17,23 +17,23 @@ CC = g++
 CFLAGS = -g -Wall -Wextra -c
 
 #Links the .o files together and creates an executable
-TARGET = steg
+TARGET = card
 
 #Readies $(TARGET) for use in the following code
 all: $(TARGET)
 
 #Marks all the files that will be compiled
-$(TARGET):	main.o library.o
-		$(CC) main.o library.o -o $(TARGET)
+$(TARGET):	main.o Library.o
+		$(CC) main.o Library.o -o $(TARGET)
 
 #Compiles the main.cpp file with the .h file
-main.o: 	main.cpp library.h
+main.o: 	main.cpp Library.h Book.h
 		$(CC) $(CFLAGS) main.cpp
 
 #Compiles the Steganography.cpp/.h files
-library.o: 	library.h library.cpp
-		$(CC) $(CFLAGS) library.cpp
+library.o: 	Library.h Library.cpp Book.h
+		$(CC) $(CFLAGS) Library.cpp
 
 #Cleans out any unnecaary items post compiling.
 clean:
-		$(RM) *.o *~ LibraryCard
+		$(RM) *.o *~ card
