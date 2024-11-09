@@ -30,86 +30,100 @@ int main() {
   Library library;
 
   int choice;
-  do {
+  int pages;
+  float price;
+  short year; 
+  string author, isbn, title, filename;
+  
     // Ask the user if they want to load data from a file initially
     cout << "Do you want to load data from a file? (y/n): ";
     char loadChoice;
     cin >> loadChoice;
     cin.ignore(); // Clear the newline character from the buffer
 
+    
     if (loadChoice == 'y' || loadChoice == 'Y') {
-      library.loadBooksFromFile("database.txt");
-      cout << "Books loaded from file.\n";
+      cout << "What file would you like to load?(txt file please): ";
+      cin >> filename; 
+      library.loadBooksFromFile(filename);
+      cout << "\nBooks loaded from file.\n"
+	   << "If you don't see anything when viewing books, there was likely a typo, the file was invalid, or the file was empty." << endl;
     } else {
       cout << "Starting with an empty library.\n";
     }
 
+    
     // Main loop for menu options
     do {
       displayMenu();
       cin >> choice;
       cin.clear();
-      while (cin.get() != '\n') ;  // Clear the input buffer
-
+      while (cin.get() != '\n');  // Clear the input buffer
+      // switch case for options
       switch (choice) {
       case 1: {
-	string title, author, isbn;
-	int pages;
-	float price;
-	short year;
 
 	cout << "Enter title: ";
-	cin.ignore();
 	getline(cin, title);
         cout << "Enter author: ";
 	getline(cin, author);
 	cout << "Enter number of pages: ";
 	cin >> pages;
-	cin.ignore(); // Clear newline
+    	cin.ignore(); // Clear newline
 	cout << "Enter ISBN: ";
 	getline(cin, isbn);
 	cout << "Enter cover price: ";
 	cin >> price;
-	cin.ignore(); // Clear newline
+       	cin.ignore(); // Clear newline
 	cout << "Enter year: ";
 	cin >> year;
-	cin.ignore(); // Clear newline
+       	cin.ignore(); // Clear newline
 
+	cout << "--------------------------" << endl; 
 	library.insertSorted(Book(title, author, pages, isbn, price, year));
 	break;
       }
       case 2: {
-	string author;
 	cout << "Enter author name: ";
 	getline(cin, author);
+	cout << "--------------------------" << endl;
 	library.findAuthor(author);
 	break;
       }
       case 3: {
-	string title;
 	cout << "Enter title: ";
 	getline(cin, title);
+	cout << "--------------------------" << endl;
 	library.findTitle(title);
 	break;
       }
       case 4: {
-	string author, title;
 	cout << "Enter author name: ";
 	getline(cin, author);
 	cout << "Enter title: ";
 	getline(cin, title);
+	cout << "--------------------------" << endl;
 	library.deleteBook(author, title);
 	break;
       }
       case 5:
+	cout << "--------------------------" << endl;
 	library.displayAllBooks();
 	break;
       case 6:
-	library.saveBooksToFile("database.txt");
+	cout << "--------------------------" << endl;
+	cout << "What file would you like to save to?";
+	cin >> filename; 
+	cout << "--------------------------" << endl;
+	library.saveBooksToFile(filename);
 	cout << "Books saved to file.\n";
 	break;
       case 7:
-	library.loadBooksFromFile("database.txt");
+	cout << "--------------------------" << endl;
+	cout << "What file would you like to load?(txt file please): ";
+	cin >> filename;
+	cout << "--------------------------" << endl;
+	library.loadBooksFromFile(filename);
         cout << "Books loaded from file.\n";
 	break;
       case 8:
@@ -117,10 +131,10 @@ int main() {
 	break;
       default:
 	cout << "Invalid choice. Try again.\n";
-      }
-    } while (choice != 8);  // Exit when option 8 is chosen
 
-  } while (choice != 8);
+      }
+
+    } while (choice != 8);
 
   return 0;
 }
