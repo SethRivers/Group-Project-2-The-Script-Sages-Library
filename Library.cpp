@@ -7,13 +7,27 @@
  * 
  */
 
+#include "Book.h"
 #include "Library.h"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <sstream>
+#include <string>
+#include <list>
+//#include 
 
 using namespace std; 
+
+// Constructor to initialize the Book
+Book::Book(std::string t, std::string a, int p, std::string i, float c, short y){
+  title = t;
+  authorName = a;
+  pages = p;
+  isbn = i;
+  coverPrice = c;
+  year = y;
+    }
+
 // Method to load books from a file
 void Library::loadBooksFromFile(const std::string& filename) {
   string line;
