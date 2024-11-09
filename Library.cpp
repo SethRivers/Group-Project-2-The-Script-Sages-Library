@@ -17,7 +17,7 @@ using namespace std;
 // Method to load books from a file
 void Library::loadBooksFromFile(const std::string& filename) {
   string line;
-  fstream file;
+  ifstream file;
 
   file.open(filename);
   string title, author, isbn;
