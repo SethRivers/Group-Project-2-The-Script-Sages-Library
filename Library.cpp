@@ -13,31 +13,28 @@
 #include <iomanip>
 #include <sstream>
 
+using namespace std; 
 // Method to load books from a file
 void Library::loadBooksFromFile(const std::string& filename) {
-  std::ifstream file(filename);
-  std::string line;
+  string line;
+  fstream file;
 
-  while (std::getline(file, line)) {
-    // Skip empty lines
+  file.open(filename);
+  string title, author, isbn;
+  int pages, year;
+  float price; 
+
+  file >> title; 
+  while (file) {
+    file >> author;
+    file >> pages;
+    file >> isbn;
+    file >> price;
+    file >> year;
+    //skips empty lines
     if (line.empty()) continue;
-
-    std::istringstream stream(line);
-    std::string title, author, isbn;
-    int pages, year;
-    float price;
-
-    // Read title (remove quotes)
-    std::getline(stream, title, '"');  // Skip first quote
-    std::getline(stream, title, '"');  // Get title inside quotes
-
-    // Read author (remove quotes)
-    std::getline(stream, author, '"');  // Skip first quote
-    std::getline(stream, author, '"');  // Get author inside quotes
-
-    // Read remaining fields
-    stream >> pages >> isbn >> price >> year;
-
+    file >> title; 
+    
     // If any fields are missing, continue to the next line (skip invalid entries)
     if (title.empty() || author.empty() || pages <= 0 || isbn.empty() || price <= 0 || year <= 0) {
       continue;
@@ -53,8 +50,7 @@ void Library::saveBooksToFile(const std::string &filename) {
   for (const Book &book : books) {
     outfile << book.title << "\n" << book.authorName << "\n"
 	    << book.pages << "\n" << book.isbn << "\n"
-	    << std::fixed << std::setprecision(2) << book.coverPrice << "\n"
-	    << book.year << "\n";
+	    << book.coverPrice << "\n" << book.year << "\n";
   }
   outfile.close();
 }
@@ -92,7 +88,7 @@ void Library::findTitle(const std::string &title) {
     }
   }
   if (!found) {
-    std::cout << "No book found with title: " << title << "\n";
+    cout << "No book found with title: " << title << "\n";
   }
 }
 
