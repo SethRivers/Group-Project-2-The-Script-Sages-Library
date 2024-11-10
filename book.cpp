@@ -1,3 +1,13 @@
+/**
+ * @file book.cpp
+ * @author Bodey Lassiter
+ * @date 2024-11-09
+ * @This file defines the Book class with a constructor to initialize a book's attributes and getter methods to access details like the title, author, pages, ISBN, cover price, and year. The displayBook() method prints all these details to the console. 
+ * 
+ * 
+ */
+
+
 #include "book.h"
 #include <iostream>
 using namespace std;
