@@ -1,117 +1,185 @@
-// main.cpp
-#include "Library.h"
 #include <iostream>
+#include <fstream>
+#include "library.h"
+using namespace std;
 
-void displayMenu() {
-    std::cout << "\nLibrary Menu:\n"
-              << "1. Add Book\n"
-              << "2. Find Books by Author\n"
-              << "3. Find Book by Title\n"
-              << "4. Delete Book\n"
-              << "5. Display All Books\n"
-              << "6. Save Books to File\n"
-              << "7. Load Books from File\n"
-              << "8. Exit\n"
-              << "Enter your choice: ";
-}
 
 int main() {
-    Library library;
+    Library library;  // Creates a Library object to manage books
+    string filename;
 
-    int choice;
+    // Prompts the user to enter a filename to load an existing library
+    cout << "Enter the filename to load the library from: ";
+    getline(cin, filename);
+    library.loadFromFile(filename);  // Loads books from the specified file
+
+    int choice;  // Variable to store user's menu choice
     do {
-        // Ask the user if they want to load data from a file initially
-        std::cout << "Do you want to load data from a file? (y/n): ";
-        char loadChoice;
-        std::cin >> loadChoice;
-        std::cin.ignore(); // Clear the newline character from the buffer
+        // Display menu options to the user
+        cout << "Library Menu:" << endl;
+        cout << "1. Display all books" << endl;
+        cout << "2. Find books by author" << endl;
+        cout << "3. Find books by title" << endl;
+        cout << "4. Add a book (sorted)" << endl;
+        cout << "5. Delete a book" << endl;
+        cout << "6. Push book to front" << endl;
+        cout << "7. Push book to back" << endl;
+        cout << "8. Save and exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();  // Clears newline character from input
 
-        if (loadChoice == 'y' || loadChoice == 'Y') {
-            library.loadBooksFromFile("database.txt");
-            std::cout << "Books loaded from file.\n";
-        } else {
-            std::cout << "Starting with an empty library.\n";
-        }
+        switch (choice) {
+            case 1:
+                // Displays all books in the library
+                library.displayAllBooks();
+                break;
 
-        // Main loop for menu options
-        do {
-            displayMenu();
-            std::cin >> choice;
-            std::cin.clear();
-            while (std::cin.get() != '\n') ;  // Clear the input buffer
-
-            switch (choice) {
-                case 1: {
-                    std::string title, author, isbn;
-                    int pages;
-                    float price;
-                    short year;
-
-                    std::cout << "Enter title: ";
-                    std::cin.ignore();
-                    std::getline(std::cin, title);
-                    std::cout << "Enter author: ";
-                    std::getline(std::cin, author);
-                    std::cout << "Enter number of pages: ";
-                    std::cin >> pages;
-                    std::cin.ignore(); // Clear newline
-                    std::cout << "Enter ISBN: ";
-                    std::getline(std::cin, isbn);
-                    std::cout << "Enter cover price: ";
-                    std::cin >> price;
-                    std::cin.ignore(); // Clear newline
-                    std::cout << "Enter year: ";
-                    std::cin >> year;
-                    std::cin.ignore(); // Clear newline
-
-                    library.insertSorted(Book(title, author, pages, isbn, price, year));
-                    break;
-                }
-                case 2: {
-                    std::string author;
-                    std::cout << "Enter author name: ";
-                    std::getline(std::cin, author);
-                    library.findAuthor(author);
-                    break;
-                }
-                case 3: {
-                    std::string title;
-                    std::cout << "Enter title: ";
-                    std::getline(std::cin, title);
-                    library.findTitle(title);
-                    break;
-                }
-                case 4: {
-                    std::string author, title;
-                    std::cout << "Enter author name: ";
-                    std::getline(std::cin, author);
-                    std::cout << "Enter title: ";
-                    std::getline(std::cin, title);
-                    library.deleteBook(author, title);
-                    break;
-                }
-                case 5:
-                    library.displayAllBooks();
-                    break;
-                case 6:
-                    library.saveBooksToFile("database.txt");
-                    std::cout << "Books saved to file.\n";
-                    break;
-                case 7:
-                    library.loadBooksFromFile("database.txt");
-                    std::cout << "Books loaded from file.\n";
-                    break;
-                case 8:
-                    std::cout << "Exiting...\n";
-                    break;
-                default:
-                    std::cout << "Invalid choice. Try again.\n";
+            case 2: {
+                // Finds and displays books by a specific author
+                string author;
+                cout << "Enter author name: ";
+                getline(cin, author);
+                library.findAuthor(author);
+                break;
             }
-        } while (choice != 8);  // Exit when option 8 is chosen
 
-    } while (choice != 8);
+            case 3: {
+                // Finds and displays a book by title
+                string title;
+                cout << "Enter book title: ";
+                getline(cin, title);
+                library.findAlbum(title);
+                break;
+            }
 
-    return 0;
+            case 4: {
+                // Adds a new book to the library, sorting it by author
+                string title, author, isbn;
+                int pages, year;
+                float price;
+                cout << "Enter book title: ";
+                getline(cin, title);
+                cout << "Enter author name: ";
+                getline(cin, author);
+                cout << "Enter number of pages: ";
+                cin >> pages;
+                cin.ignore();
+                cout << "Enter ISBN: ";
+                getline(cin, isbn);
+                cout << "Enter cover price: ";
+                cin >> price;
+                cout << "Enter year: ";
+                cin >> year;
+                cin.ignore();
+
+                // Creates a Book object and inserts it in sorted order
+                Book book(title, author, pages, isbn, price, year);
+                library.insertSorted(book);
+                break;
+            }
+
+            case 5: {
+                // Deletes a book by matching the author and title
+                string author, title;
+                cout << "Enter author name: ";
+                getline(cin, author);
+                cout << "Enter book title: ";
+                getline(cin, title);
+                library.deleteBook(author, title);
+                break;
+            }
+
+            case 6: {
+                // Adds a new book to the front of the library's list
+                string title, author, isbn;
+                int pages, year;
+                float price;
+                cout << "Enter book title: ";
+                getline(cin, title);
+                cout << "Enter author name: ";
+                getline(cin, author);
+                cout << "Enter number of pages: ";
+                cin >> pages;
+                cin.ignore();
+                cout << "Enter ISBN: ";
+                getline(cin, isbn);
+                cout << "Enter cover price: ";
+                cin >> price;
+                cout << "Enter year: ";
+                cin >> year;
+                cin.ignore();
+
+                // Creates a Book object and pushes it to the front of the list
+                Book book(title, author, pages, isbn, price, year);
+                library.pushFront(book);
+                break;
+            }
+
+            case 7: {
+                // Adds a new book to the back of the library's list
+                string title, author, isbn;
+                int pages, year;
+                float price;
+                cout << "Enter book title: ";
+                getline(cin, title);
+                cout << "Enter author name: ";
+                getline(cin, author);
+                cout << "Enter number of pages: ";
+                cin >> pages;
+                cin.ignore();
+                cout << "Enter ISBN: ";
+                getline(cin, isbn);
+                cout << "Enter cover price: ";
+                cin >> price;
+                cout << "Enter year: ";
+                cin >> year;
+                cin.ignore();
+
+                // Creates a Book object and pushes it to the back of the list
+                Book book(title, author, pages, isbn, price, year);
+                library.pushBack(book);
+                break;
+            }
+
+            case 8: {
+                // Prompts the user to save the library to a file, with overwrite check
+                bool fileSaved = false;
+                while (!fileSaved) {
+                    cout << "Enter the filename to save the library to (e.g., books.txt): ";
+                    getline(cin, filename);
+
+                    // Check if the file already exists
+                    ifstream fileCheck(filename);
+                    if (fileCheck) {
+                        // If file exists, ask for permission to overwrite
+                        cout << "File already exists. Overwrite? (y/n): ";
+                        char overwrite;
+                        cin >> overwrite;
+                        cin.ignore();
+                        if (tolower(overwrite) == 'y') {
+                            library.saveToFile(filename);  // Saves the library
+                            cout << "Library saved to " << filename << "!" << endl;
+                            fileSaved = true;
+                        }
+                    } else {
+                        // File does not exist, save directly
+                        library.saveToFile(filename);
+                        cout << "Library saved to " << filename << "!" << endl;
+                        fileSaved = true;
+                    }
+                }
+                break;
+            }
+
+            default:
+                // Displays a message for an invalid menu choice
+                cout << "Invalid choice." << endl;
+        }
+    } while (choice != 8);  // Loops until the user chooses to save and exit
+
+    return 0;  // End of program
 }
+
 
 
