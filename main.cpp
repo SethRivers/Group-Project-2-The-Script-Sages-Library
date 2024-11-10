@@ -1,3 +1,13 @@
+/**
+ * @file main.cpp
+ * @author Bodey Lassiter
+ * @date 2024-11-09
+ * @This file defines the Book class, which represents a book in the library. It contains attributes like title, author, pages, ISBN, cover price, and year, along with methods for accessing these attributes and displaying the book's details. 
+ * 
+ * 
+ */
+
+
 #include <iostream>
 #include <fstream>
 #include "library.h"
