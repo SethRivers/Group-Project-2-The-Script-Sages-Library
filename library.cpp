@@ -1,3 +1,12 @@
+/**
+ * @file library.cpp
+ * @author Bodey Lassiter
+ * @date 2024-11-09
+ * @This file implements the methods declared in library.h. It includes functions like insertSorted() for adding books in alphabetical order by author, findAuthor() and findAlbum() for searching books by author or title, deleteBook() for removing a book, and file operations like loadFromFile() and saveToFile() to read/write books from/to a file. 
+ * 
+ * 
+ */
+
 #include "library.h"
 #include <iostream>
 #include <fstream>
