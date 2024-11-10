@@ -7,137 +7,117 @@
  * 
  */
 
-#include "Book.h"
 #include "Library.h"
-#include <fstream>
 #include <iostream>
-#include <iomanip>
-#include <string>
-#include <list>
-//#include 
+#include <fstream>
+using namespace std;
 
-using namespace std; 
-
-// Constructor to initialize the Book
-Book::Book(std::string t, std::string a, int p, std::string i, float c, short y){
-  title = t;
-  authorName = a;
-  pages = p;
-  isbn = i;
-  coverPrice = c;
-  year = y;
-    }
-
-// Method to load books from a file
-void Library::loadBooksFromFile(const std::string& filename) {
-  string line;
-  ifstream file;
-
-  file.open(filename);
-  string title, author, isbn;
-  int pages, year;
-  float price; 
-
-  file >> title; 
-  while (file) {
-    file >> author;
-    file >> pages;
-    file >> isbn;
-    file >> price;
-    file >> year;
-    //skips empty lines
-    if (line.empty()) continue;
-    file >> title; 
-    
-    // If any fields are missing, continue to the next line (skip invalid entries)
-    if (title.empty() || author.empty() || pages <= 0 || isbn.empty() || price <= 0 || year <= 0) {
-      continue;
-    }
-
-    // Add the book to the list
-    books.push_back(Book(title, author, pages, isbn, price, year));
-  }
-}
-// Method to save books to a file
-void Library::saveBooksToFile(const std::string &filename) {
-  std::ofstream outfile(filename);
-  for (const Book &book : books) {
-    outfile << book.title << "\n" << book.authorName << "\n"
-	    << book.pages << "\n" << book.isbn << "\n"
-	    << book.coverPrice << "\n" << book.year << "\n";
-  }
-  outfile.close();
-}
-
-// Insert a book into the list in sorted order by author's name
-void Library::insertSorted(const Book &book) {
+// Inserts a book into the library in alphabetical order by author's name
+void Library::insertSorted(const Book& book) {
+  // Finds the correct position to insert the book to keep list sorted by author name
   auto it = books.begin();
-  while (it != books.end() && it->authorName < book.authorName) {
+  while (it != books.end() && it->getAuthorName() < book.getAuthorName()) {
     ++it;
   }
-  books.insert(it, book);
+  books.insert(it, book);  // Inserts the book at the found position
 }
 
-// Find and display all books by a specific author
-void Library::findAuthor(const std::string &author) {
-  bool found = false;
-  for (const Book &book : books) {
-    if (book.authorName == author) {
-      displayBook(book);
+// Searches for books by a specific author and displays them
+void Library::findAuthor(const string& author) const {
+  bool found = false;  // Tracks if any books are found
+  for (auto it = books.begin(); it != books.end(); ++it) {
+    if (it->getAuthorName() == author) {  // Checks if book's author matches
+      it->displayBook();  // Displays the book details if there's a match
       found = true;
     }
   }
-  if (!found) {
-    std::cout << "No books found by author: " << author << "\n";
+  if (!found) {  // If no books are found, display a message
+    cout << "No books found by author: " << author << endl;
   }
 }
 
-// Find and display a book by its title
-void Library::findTitle(const std::string &title) {
-  bool found = false;
-  for (const Book &book : books) {
-    if (book.title == title) {
-      displayBook(book);
+// Searches for a book by its title and displays it
+void Library::findAlbum(const string& title) const {
+  bool found = false;  // Tracks if the book is found
+  for (auto it = books.begin(); it != books.end(); ++it) {
+    if (it->getTitle() == title) {  // Checks if book's title matches
+      it->displayBook();  // Displays book details if there's a match
       found = true;
     }
   }
-  if (!found) {
-    cout << "No book found with title: " << title << "\n";
+  if (!found) {  // If no book is found, display a message
+    cout << "No books found with title: " << title << endl;
   }
 }
 
-// Delete a book by author and title
-void Library::deleteBook(const std::string &author, const std::string &title) {
+// Deletes a book by matching both author and title
+void Library::deleteBook(const string& author, const string& title) {
   auto it = books.begin();
   while (it != books.end()) {
-    if (it->authorName == author && it->title == title) {
-      books.erase(it);
-      std::cout << "Book deleted: " << title << " by " << author << "\n";
-      return;
+    if (it->getAuthorName() == author && it->getTitle() == title) {
+      it = books.erase(it);  // Erases the book and updates the iterator
+    } else {
+      ++it;  // Move to the next book if no match
     }
-    ++it;
   }
-  std::cout << "No matching book found for deletion.\n";
 }
 
-// Display all books in the library
-void Library::displayAllBooks() {
-  if (books.empty()) {
-    std::cout << "No books in the library.\n";
+// Adds a book to the front of the library list
+void Library::pushFront(const Book& book) {
+  books.push_front(book);
+}
+
+// Adds a book to the back of the library list
+void Library::pushBack(const Book& book) {
+  books.push_back(book);
+}
+
+// Loads books from a file, creating Book objects and inserting them in sorted order
+void Library::loadFromFile(const string& filename) {
+  ifstream file(filename);  // Opens the file for reading
+  if (!file.is_open()) {    // Checks if file was opened successfully
+    cout << "Error opening file." << endl;
     return;
   }
-  for (const Book &book : books) {
-    displayBook(book);
+
+  string title, author, isbn;
+  int pages, year;
+  float price;
+
+  // Reads each book's data from the file line by line and constructs Book objects
+  while (getline(file, title)) {
+    getline(file, author);
+    file >> pages >> isbn >> price >> year;
+    file.ignore(); // Skips the newline after reading the year
+
+    Book book(title, author, pages, isbn, price, year);  // Constructs a Book object
+    insertSorted(book);  // Inserts the book in sorted order
+  }
+
+  file.close();  // Closes the file after reading all books
+}
+
+// Saves all books in the library to a file
+void Library::saveToFile(const string& filename) const {
+  ofstream file(filename);  // Opens the file for writing
+  for (auto it = books.begin(); it != books.end(); ++it) {
+    // Writes each book's data to the file line by line
+    file << it->getTitle() << endl;
+    file << it->getAuthorName() << endl;
+    file << it->getPages() << endl;
+    file << it->getIsbn() << endl;
+    file << it->getCoverPrice() << endl;
+    file << it->getYear() << endl;
   }
 }
 
-// Display a single book
-void Library::displayBook(const Book &book) {
-  std::cout << "Title: " << book.title << "\n"
-	    << "Author: " << book.authorName << "\n"
-	    << "Pages: " << book.pages << "\n"
-	    << "ISBN: " << book.isbn << "\n"
-	    << "Price: $" << std::fixed << std::setprecision(2) << book.coverPrice << "\n"
-	    << "Year: " << book.year << "\n"
-	    << "--------------------------\n";
+// Displays all books in the library
+void Library::displayAllBooks() const {
+  if (books.empty()) {  // Checks if there are any books in the library
+    cout << "No books available in the library." << endl;
+    return;
+  }
+  for (auto it = books.begin(); it != books.end(); ++it) {
+    it->displayBook();  // Displays each book
+  }
 }

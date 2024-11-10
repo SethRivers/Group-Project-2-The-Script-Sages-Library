@@ -2,19 +2,31 @@
 #define BOOK_H
 
 #include <string>
+using namespace std;
 
-struct Book {
-  std::string title;
-  std::string authorName;
+class Book {
+private:
+  string title;
+  string authorName;
   int pages;
-  std::string isbn;
+  string isbn;
   float coverPrice;
-  short year;
-  Book* next; 
+  int year;
 
-  // Constructor to initialize the Book
-  Book(std::string t, std::string a, int p, std::string i, float c, short y);
-  // : title(t), authorName(a), pages(p), isbn(i), coverPrice(c), year(y) {}
+public:
+  // Constructor
+  Book(string t, string a, int p, string i, float cp, int y);
+
+  // Getters and Setters
+  string getTitle() const;
+  string getAuthorName() const;
+  int getPages() const;
+  string getIsbn() const;
+  float getCoverPrice() const;
+  int getYear() const;
+
+  // Display function
+  void displayBook() const;
 };
 
-#endif // BOOK_H
+#endif
