@@ -1,16 +1,31 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -Wall -std=c++11
 
-all: main
+LIBRARY_SRC = library.cpp
+BOOK_SRC = book.cpp
+MAIN_SRC = main.cpp
 
-main: main.o Library.o
-	$(CXX) $(CXXFLAGS) -o main main.o Library.o
+OBJECTS = library.o book.o main.o
+EXECUTABLE = library_app
 
-main.o: main.cpp Library.h Book.h
+# Build executable from object files
+$(EXECUTABLE): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(EXECUTABLE)
+
+# Compile library source files to object files
+library.o: library.cpp library.h
+	$(CXX) $(CXXFLAGS) -c library.cpp
+
+# Compile book source files to object files
+book.o: book.cpp book.h
+	$(CXX) $(CXXFLAGS) -c book.cpp
+
+# Compile main source files to object files
+main.o: main.cpp library.h book.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
-Library.o: Library.cpp Library.h Book.h
-	$(CXX) $(CXXFLAGS) -c Library.cpp
-
+# Clean up object files and executable
 clean:
-	rm -f *.o main
+	rm -f $(OBJECTS) $(EXECUTABLE)
+
+
