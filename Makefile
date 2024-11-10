@@ -2,38 +2,40 @@
  # @file Makefile
  # @author Script Sages
  # @date 2024-10-23
- # @brief Description: The Makefile for the Simple Steganography assignment. Compiles the main and
- # steganography files together so that they can be used.
+ # @brief Description: The Makefile for the Simple Steganography assignment. Compiles the main, book, and
+ # Library files together so that they can be used.
  #
  #
  #
  #
  # /
 
-#Defines the compiler
-CC = g++
+CXX = g++
+CXXFLAGS = -Wall -std=c++11
 
-#Compile with all errors and warnings
-CFLAGS = -g -Wall -Wextra -c
+LIBRARY_SRC = Library.cpp
+BOOK_SRC = Book.cpp
+MAIN_SRC = main.cpp
 
-#Links the .o files together and creates an executable
-TARGET = steg
+OBJECTS = Library.o Book.o main.o
+EXECUTABLE = card
 
-#Readies $(TARGET) for use in the following code
-all: $(TARGET)
+# Build executable from object files
+$(EXECUTABLE): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(EXECUTABLE)
 
-#Marks all the files that will be compiled
-$(TARGET):	main.o library.o
-		$(CC) main.o library.o -o $(TARGET)
+# Compile library source files to object files
+Library.o: Library.cpp Library.h
+	$(CXX) $(CXXFLAGS) -c Library.cpp
 
-#Compiles the main.cpp file with the .h file
-main.o: 	main.cpp library.h
-		$(CC) $(CFLAGS) main.cpp
+# Compile book source files to object files
+Book.o: Book.cpp Book.h
+	$(CXX) $(CXXFLAGS) -c Book.cpp
 
-#Compiles the Steganography.cpp/.h files
-library.o: 	library.h library.cpp
-		$(CC) $(CFLAGS) library.cpp
+# Compile main source files to object files
+main.o: main.cpp Library.h Book.h
+	$(CXX) $(CXXFLAGS) -c main.cpp
 
-#Cleans out any unnecaary items post compiling.
+# Clean up object files and executable
 clean:
-		$(RM) *.o *~ LibraryCard
+	rm -f $(OBJECTS) $(EXECUTABLE) *~
